@@ -6,6 +6,7 @@ import React from "react";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { captureAndFinalizePaymentService } from "@/actions/payment/payment";
+import { Suspense } from "react";
 const PaymentReturn = () => {
  const searchParams = useSearchParams()
  const paymentId = searchParams.get('paymentId') ;
@@ -38,6 +39,7 @@ const PaymentReturn = () => {
 
 
   return (
+    <Suspense>
     <div>
       <Header />
       <Card>
@@ -46,6 +48,7 @@ const PaymentReturn = () => {
         </CardHeader>
       </Card>
     </div>
+    </Suspense>
   );
 };
 

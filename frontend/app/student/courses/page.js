@@ -20,7 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import useAuth from "@/lib/hooks/useAuth";
-
+import { Suspense } from "react";
 function createSearchParamsHelper(filterParams) {
   const queryParams = [];
 
@@ -125,6 +125,7 @@ const StudentCourse = () => {
   }, []);
 
   return (
+    <Suspense>
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">All Courses</h1>
       <div className="flex flex-col md:flex-row gap-4">
@@ -236,189 +237,9 @@ const StudentCourse = () => {
         </main>
       </div>
     </div>
+    </Suspense>
   );
 };
 
 export default StudentCourse;
 
-// "use client";
-// import React from "react";
-// import { Skeleton } from "@/components/ui/skeleton";
-// import { Button } from "@/components/ui/button";
-// import { Card, CardContent, CardTitle } from "@/components/ui/card";
-// import { ArrowUpDownIcon } from "lucide-react";
-// import { useEffect, useState } from "react";
-// import { Label } from "@/components/ui/label";
-// import useStudent from "@/lib/hooks/useStudent";
-// import { sortOptions, filterOptions } from "@/lib/config/data";
-// import { Checkbox } from "@/components/ui/checkbox";
-// import { GetStudentCourse } from "@/actions/student/course";
-// import {
-//   DropdownMenu,
-//   DropdownMenuContent,
-//   DropdownMenuRadioGroup,
-//   DropdownMenuRadioItem,
-//   DropdownMenuTrigger,
-// } from "@/components/ui/dropdown-menu";
-
-// const StudentCourse = () => {
-//   const {
-//     studentViewCoursesList,
-//     setStudentViewCoursesList,
-//     loadingState,
-//     setLoadingState,
-//   } = useStudent();
-
-//   const [sort, setSort] = useState("price-lowtohigh");
-//   const [filters, setFilters] = useState({});
-
-//   // Simplified filter change handler
-//   const handleFilterChange = (sectionId, option) => {
-//     setFilters(prev => {
-//       const newFilters = { ...prev };
-      
-//       if (!newFilters[sectionId]) {
-//         newFilters[sectionId] = [option.id];
-//       } else {
-//         const index = newFilters[sectionId].indexOf(option.id);
-//         if (index === -1) {
-//           newFilters[sectionId].push(option.id);
-//         } else {
-//           newFilters[sectionId] = newFilters[sectionId].filter(id => id !== option.id);
-//           if (newFilters[sectionId].length === 0) {
-//             delete newFilters[sectionId];
-//           }
-//         }
-//       }
-      
-//       return newFilters;
-//     });
-//   };
-
-//   // Fetch courses whenever filters or sort changes
-//   useEffect(() => {
-//     const fetchCourses = async () => {
-//       setLoadingState(true);
-//       console.log('Current Filters:', filters.level); // Debug log
-//       console.log('Current Sort:', sort); // Debug log
-      
-//       const response = await GetStudentCourse(filters, sort);
-      
-//       if (response?.success) {
-//         setStudentViewCoursesList(response.data);
-//       }
-      
-//       setLoadingState(false);
-//     };
-
-//     fetchCourses();
-//   }, [filters, sort]);
-
-//   return (
-//     <div className="container mx-auto p-4">
-//       <h1 className="text-3xl font-bold mb-4">All Courses</h1>
-      
-//       {/* Debug section */}
-//       <div className="mb-4 p-2 bg-gray-100">
-//         <p>Active Filters: {JSON.stringify(filters)}</p>
-//         <p>Sort: {sort}</p>
-//       </div>
-
-//       <div className="flex flex-col md:flex-row gap-4">
-//         {/* Filters */}
-//         <aside className="w-full md:w-64 space-y-4">
-//           {Object.entries(filterOptions).map(([sectionId, options]) => (
-//             <div key={sectionId} className="p-4 border-b">
-//               <h3 className="font-bold mb-3">{sectionId.toUpperCase()}</h3>
-//               <div className="grid gap-2">
-//                 {options.map((option) => (
-//                   <Label 
-//                     key={option.id}
-//                     className="flex items-center gap-2"
-//                   >
-//                     <Checkbox
-//                       checked={filters[sectionId]?.includes(option.id) || false}
-//                       onCheckedChange={() => handleFilterChange(sectionId, option)}
-//                     />
-//                     {option.label}
-//                   </Label>
-//                 ))}
-//               </div>
-//             </div>
-//           ))}
-//         </aside>
-
-//         {/* Main Content */}
-//         <main className="flex-1">
-//           <div className="flex justify-end mb-4 gap-4">
-//             <DropdownMenu>
-//               <DropdownMenuTrigger asChild>
-//                 <Button variant="outline" className="gap-2">
-//                   <ArrowUpDownIcon className="h-4 w-4" />
-//                   Sort By
-//                 </Button>
-//               </DropdownMenuTrigger>
-//               <DropdownMenuContent align="end">
-//                 <DropdownMenuRadioGroup value={sort} onValueChange={setSort}>
-//                   {sortOptions.map((option) => (
-//                     <DropdownMenuRadioItem key={option.id} value={option.id}>
-//                       {option.label}
-//                     </DropdownMenuRadioItem>
-//                   ))}
-//                 </DropdownMenuRadioGroup>
-//               </DropdownMenuContent>
-//             </DropdownMenu>
-            
-//             <span className="text-sm font-bold">
-//               {studentViewCoursesList.length} Results
-//             </span>
-//           </div>
-
-//           {/* Course List */}
-//           <div className="space-y-4">
-//             {loadingState ? (
-//               <Skeleton className="h-32" />
-//             ) : studentViewCoursesList.length > 0 ? (
-//               studentViewCoursesList.map((course) => (
-//                 <Card key={course._id} className="cursor-pointer">
-//                   <CardContent className="flex gap-4 p-4">
-//                     <div className="w-48 h-32 flex-shrink-0">
-//                       <img
-//                         src={course.image}
-//                         alt={course.title}
-//                         className="w-full h-full object-cover"
-//                       />
-//                     </div>
-//                     <div className="flex-1">
-//                       <CardTitle className="text-xl mb-2">
-//                         {course.title}
-//                       </CardTitle>
-//                       <p className="text-sm text-gray-600 mb-1">
-//                         Created By{" "}
-//                         <span className="font-bold">{course.instructorName}</span>
-//                       </p>
-//                       <p className="text-gray-600 mt-3 mb-2">
-//                         {`${course.curriculum?.length || 0} ${
-//                           course.curriculum?.length === 1 ? "Lecture" : "Lectures"
-//                         } - ${course.level.toUpperCase()} Level`}
-//                       </p>
-//                       <p className="font-bold text-lg">
-//                         ${course.pricing}
-//                       </p>
-//                     </div>
-//                   </CardContent>
-//                 </Card>
-//               ))
-//             ) : (
-//               <div className="text-center">
-//                 <h2 className="text-2xl font-bold">No Courses Found</h2>
-//               </div>
-//             )}
-//           </div>
-//         </main>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default StudentCourse;
